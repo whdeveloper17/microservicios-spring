@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="UsuarioServiceApplication2" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="usuario-service" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.usuarioservice.UsuarioServiceApplication" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
