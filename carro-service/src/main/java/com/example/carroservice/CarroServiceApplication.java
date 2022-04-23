@@ -2,9 +2,10 @@ package com.example.carroservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
-@Enablecon
 @SpringBootApplication
+@EnableEurekaClient
 public class CarroServiceApplication {
 
     public static void main(String[] args) {
