@@ -31,12 +31,12 @@ public class UsuarioService {
     }
 
     public List<Carro> getCarros(int usuarioId){
-        List<Carro> carroList=restTemplate.getForObject("http://localhost:8002/carro/usuario/"+usuarioId,List.class);
+        List<Carro> carroList=restTemplate.getForObject("http://carro-service/carro/usuario/"+usuarioId,List.class);
         return carroList;
     }
 
     public List<Moto> getMotos(int usuarioId){
-        List<Moto> motoList=restTemplate.getForObject("http://localhost:8003/moto/usuario/"+usuarioId,List.class);
+        List<Moto> motoList=restTemplate.getForObject("http://moto-service/moto/usuario/"+usuarioId,List.class);
         return motoList;
     }
 
