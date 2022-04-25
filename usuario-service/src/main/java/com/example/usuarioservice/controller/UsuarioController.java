@@ -1,6 +1,7 @@
 package com.example.usuarioservice.controller;
 
 import com.example.usuarioservice.entidades.Usuario;
+import com.example.usuarioservice.modelos.Bicicleta;
 import com.example.usuarioservice.modelos.Carro;
 import com.example.usuarioservice.modelos.Moto;
 import com.example.usuarioservice.servicio.UsuarioService;
@@ -64,6 +65,18 @@ public class UsuarioController {
         List<Moto> motoList=usuarioService.getMotos(usuarioId);
         return ResponseEntity.ok(motoList);
     }
+
+    @CircuitBreaker(name = "bicicletasCB",fallbackMethod = "fallBackGetBicicletas")
+    @GetMapping("/bicicleta/{usuarioId}")
+    public ResponseEntity<List<Bicicleta>> getBicicletas(@PathVariable("usuarioId") int usuarioId){
+        Usuario usuario=usuarioService.getUsuarioById(usuarioId);
+        if (usuario==null){
+            return ResponseEntity.noContent().build();
+        }
+        List<Bicicleta> bicicletaList=usuarioService.getBicicletas(usuarioId);
+        return ResponseEntity.ok(bicicletaList);
+    }
+
     @CircuitBreaker(name = "carrosCB",fallbackMethod = "fallBackSaveCarros")
     @PostMapping("/carro/{usuarioId}")
     public ResponseEntity<Carro> guardarCarro(@PathVariable("usuarioId") int usuarioId,@RequestBody Carro carro){
@@ -76,6 +89,13 @@ public class UsuarioController {
     public ResponseEntity<Moto> guardarMoto(@PathVariable("usuarioId") int usuarioId,@RequestBody Moto moto){
         Moto nuevaMoto=usuarioService.saveMoto(usuarioId,moto);
         return ResponseEntity.ok(nuevaMoto);
+    }
+
+    @CircuitBreaker(name = "bicicletasCB",fallbackMethod = "fallBackSaveBicicletas")
+    @PostMapping("/bicicleta/{usuarioId}")
+    public ResponseEntity<Bicicleta> guardarMBicicleta(@PathVariable("usuarioId") int usuarioId,@RequestBody Bicicleta bicicleta){
+        Bicicleta nuevaBicicleta=usuarioService.saveBicicleta(usuarioId,bicicleta);
+        return ResponseEntity.ok(nuevaBicicleta);
     }
 
     @CircuitBreaker(name = "todosCB",fallbackMethod = "fallBackGetTodos")
@@ -101,6 +121,13 @@ public class UsuarioController {
         return new ResponseEntity("El usuario : "+usuarioId+" no  tiene dinero para la moto", HttpStatus.OK);
     }
 
+    private ResponseEntity<List<Moto>>  fallBackGetBicicletas(@PathVariable("usuarioId") int usuarioId,RuntimeException exception){
+        return new ResponseEntity("El usuario : "+usuarioId+" tiene las bicicletas en el taller", HttpStatus.OK);
+    }
+
+    private ResponseEntity<Moto>  fallBackSaveBicicletas(@PathVariable("usuarioId") int usuarioId,@RequestBody Bicicleta bicicleta,RuntimeException exception){
+        return new ResponseEntity("El usuario : "+usuarioId+" no  tiene dinero para la bicicleta", HttpStatus.OK);
+    }
     private ResponseEntity<Map<String,Object>>  fallBackGetTodos(@PathVariable("usuarioId") int usuarioId,RuntimeException exception){
         return new ResponseEntity("El usuario : "+usuarioId+" tiene los vehiculos en el taller", HttpStatus.OK);
     }

@@ -2,8 +2,10 @@ package com.example.usuarioservice.servicio;
 
 import com.example.usuarioservice.configuracion.RestTemplateConfig;
 import com.example.usuarioservice.entidades.Usuario;
+import com.example.usuarioservice.feignclients.BicicletasFeignClient;
 import com.example.usuarioservice.feignclients.CarroFeignClient;
 import com.example.usuarioservice.feignclients.MotoFeignClient;
+import com.example.usuarioservice.modelos.Bicicleta;
 import com.example.usuarioservice.modelos.Carro;
 import com.example.usuarioservice.modelos.Moto;
 import com.example.usuarioservice.repositorios.UsuarioRepository;
@@ -22,12 +24,14 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final CarroFeignClient carroFeignClient;
     private final MotoFeignClient motoFeignClient;
+    private final BicicletasFeignClient bicicletasFeignClient;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, RestTemplate restTemplate, CarroFeignClient carroFeignClient, MotoFeignClient motoFeignClient) {
+    public UsuarioService(UsuarioRepository usuarioRepository, RestTemplate restTemplate, CarroFeignClient carroFeignClient, MotoFeignClient motoFeignClient, BicicletasFeignClient bicicletasFeignClient) {
         this.usuarioRepository = usuarioRepository;
         this.restTemplate = restTemplate;
         this.carroFeignClient = carroFeignClient;
         this.motoFeignClient = motoFeignClient;
+        this.bicicletasFeignClient = bicicletasFeignClient;
     }
 
     public List<Carro> getCarros(int usuarioId){
@@ -38,6 +42,10 @@ public class UsuarioService {
     public List<Moto> getMotos(int usuarioId){
         List<Moto> motoList=restTemplate.getForObject("http://moto-service/moto/usuario/"+usuarioId,List.class);
         return motoList;
+    }
+    public List<Bicicleta> getBicicletas(int usuarioId){
+        List<Bicicleta> bicicletas=restTemplate.getForObject("http://bicicleta-service/bicicleta/usuario/"+usuarioId,List.class);
+        return bicicletas;
     }
 
     public Carro saveCarro(int usuarioId,Carro carro){
@@ -51,6 +59,13 @@ public class UsuarioService {
         Moto nuevoMoto=motoFeignClient.save(moto);
         return nuevoMoto;
     }
+
+    public Bicicleta saveBicicleta(int usuarioId,Bicicleta bicicleta){
+        bicicleta.setUsuarioId(usuarioId);
+        Bicicleta nuevaBicicleta=bicicletasFeignClient.save(bicicleta);
+        return nuevaBicicleta;
+    }
+
     public List<Usuario> getAll(){
         return usuarioRepository.findAll();
     }
@@ -84,6 +99,13 @@ public class UsuarioService {
             resultado.put("motos","El usuario no tiene motos");
         }else {
             resultado.put("motos",motoList);
+        }
+
+        List<Bicicleta> bicicletaList=bicicletasFeignClient.getBicicletas(usuarioId);
+        if (motoList.isEmpty()){
+            resultado.put("bicicletas","El usuario no tiene bicicletas");
+        }else {
+            resultado.put("bicicletas",bicicletaList);
         }
         return resultado;
     }
