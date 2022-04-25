@@ -30,5 +30,5 @@ spring:
             - Path=/moto/**
         - id: bicicleta-service
           uri: lb://bicicleta-service
-          predicates: 
-            - Path=/bicicleta/**                       
+          predicates:
+            - Path=/bicicleta/**                 
